@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy To Clipboard</title>
+    <script>
+        function init() {
+            const generateButton = document.getElementById("generateButton");
+            const deleteButton = document.getElementById("deleteButton");
+            let copyTextAmount = document.getElementById("copyTextAmount");
+            let copyTextAmountValue = -1;
+            const textAreaSetBtn = document.getElementById("textAreaSetBtn");
+            const textAreaEditBtn = document.getElementById("textAreaEditBtn");
+
+            const singleLineButton = document.getElementById("singleLineBtn");
+
+            singleLineButton.onclick = () => {
+                let inputWord = document.getElementById("singleLineTxtInput").value;
+                if(inputWord !== ''){
+                    document.getElementById("singleWordContainer").innerHTML = "";
+
+                    let p = document.createElement("p");
+                    p.id = "singleWord";
+                    let sp = document.createElement("span");
+                    sp.innerText = inputWord;
+                    p.appendChild(sp);
+                    // p.innerHTML = `<code>Hello World</code>`
+                    document.getElementById("singleWordContainer").insertAdjacentElement("afterbegin", p);
+                    document.getElementById("singleWord").onclick = () => {
+                        navigator.clipboard.writeText(document.getElementById("singleWord").innerText);
+                    }
+                }
+
+            }
+            copyTextAmount.onchange = () => {
+                copyTextAmountValue = copyTextAmount.value;
+                //test
+                // console.log(copyTextAmountValue);
+            }
+            generateButton.onclick = () => {
+                if(copyTextAmountValue > 0 && copyTextAmountValue < 26){
+                    document.getElementById("singleWordContainer").innerHTML = "";
+
+                    for (let index = 0; index < copyTextAmountValue; index++) {
+                        let div = document.createElement("div");
+                        div.id = `div${index+1}`;
+                        div.insertAdjacentHTML("beforeend", `<input type="text" placeholder="add a word" id="text${index+1}">`);
+                        let button = document.createElement("button");
+                        button.id = `multiLineBtn${index+1}`;
+                        button.innerText = "Add Word";
+                        button.onclick = () => {
+                            let inputWord = document.getElementById(`text${index+1}`).value;
+                            if(inputWord !== ""){
+                                document.getElementById(`div${index+1}`).remove();
+                                let textMoveLocation = document.getElementById("singleWordContainer2");
+                                let p = document.createElement("p");
+                                p.id = `clipboardTxt${index+1}`;
+                                let sp = document.createElement("span");
+                                sp.innerText = inputWord;
+                                p.appendChild(sp);
+                                p.onclick = () => {
+                                    navigator.clipboard.writeText(p.innerText);
+                                }
+                                textMoveLocation.insertAdjacentElement("beforeend", p);
+                            }
+                            
+                        }
+                        div.insertAdjacentElement("beforeend", button);
+
+                        document.getElementById("singleWordContainer").insertAdjacentElement("beforeend", div);
+                    }
+                }
+
+            }
+            deleteButton.onclick = () => {
+                if(document.getElementById("clipboardTxt1")){
+                    let deleteYesNo = confirm("are you sure you want to delete the generated words?");
+                    if(deleteYesNo === true){
+                        document.getElementById("singleWordContainer2").innerHTML = "";
+                    }
+                }
+            }
+
+            textAreaSetBtn.onclick = () => {
+                if(document.getElementById("textarea") && document.getElementById("textarea").value !== ""){
+                    let p = document.createElement("p");
+                    textAreaEditBtn.style.display = "unset";
+                    textAreaSetBtn.style.display = "none";
+                    p.id = "textAreaToClipBoard";
+                    p.innerText = document.getElementById("textarea").value;
+                    document.getElementById("textarea").remove();
+                    p.onclick = () => {
+                        navigator.clipboard.writeText(p.innerText);
+                    }
+                    document.getElementById("box4").appendChild(p);
+                }
+            }
+            textAreaEditBtn.onclick = () => {
+                let toEditText = document.getElementById("textAreaToClipBoard").innerText;
+                document.getElementById("textAreaToClipBoard").remove();
+                textAreaEditBtn.style.display = "none";
+                textAreaSetBtn.style.display = "unset";
+                let txa = document.createElement("textarea");
+                txa.cols = "30";
+                txa.rows = "10";
+                txa.id = "textarea";
+                txa.value = toEditText;
+                document.getElementById("box4").appendChild(txa);
+            }
+            // target.onclick = () => {
+            //     navigator.clipboard.writeText(target.innerText);
+            // }   
+        }
+
+
+        window.onload = init;
+    </script>
+    <style>
+        #grid-container{
+            display: grid;
+            grid-template-areas: 
+            "a b"
+            "a c"
+            "a d"
+            "a d";
+        }
+	body{
+	    background-color: aquamarine;
+	}
+        #box1{ grid-area: a; }
+        #box2{ grid-area: b; }
+        #box3{ grid-area: c; }
+        #box4{ grid-area: d; }
+        /* layout testing: */
+        /* div{
+            border: 2px solid black;
+        } */
+        div div{
+            margin-left: 10px;
+        }
+        #link{
+            text-decoration: none;
+        }
+        #generateButton{
+            background-color: aquamarine;
+        }
+        #generateButton:hover{
+            background-color: rgb(23, 170, 121);
+        }
+        #deleteButton{
+            background-color: palevioletred;
+            color: white;
+        }
+        #deleteButton:hover{
+            background-color: rgb(148, 54, 85);
+        }
+
+        #deleteButton:active{
+            background-color: black;
+        }
+        #singleWordContainer2 span,
+        #singleWordContainer span{
+            border: 2px solid black;
+            padding: 3px 6px;
+            background-color: #fff;
+        }
+        #singleWordContainer>div{
+            margin-bottom: 10px;
+        }
+        #box2,
+        #box3,
+        #box4{
+            border-left: 2px solid black;
+            padding: 10px;
+        }
+        #box4 button {
+            padding: 5px;
+            margin-left: 30%;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        #box4 p{
+            padding: 15px;
+            border: 2px solid black;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="grid-container" style="background-color: deepskyblue; min-width: 490px; border: 3px solid purple;">
+        <div id="box1" style="margin-left: 10px; margin: 10px;">
+            <div id="singleWordContainer2">
+                <!-- generated copy-paste single lines -->
+
+            </div>
+            <div id="singleWordContainer">
+                <input type="text" placeholder="add a word" id="singleLineTxtInput">
+                <button id="singleLineBtn">Add Word</button>
+            </div>
+
+        </div>
+
+        <div id="box2">
+            <h1 style="font-size: 2.5rem; text-decoration: underline;"> Clipboard Copy Tool</h1>
+            <p style="margin: 0px;">(Set text that can be copied to clipboard on - click !)</p>
+        </div>
+
+        <div id="box3">
+            <p style="display: inline-block;">Amount: </p>
+            <input type="number" name="" id="copyTextAmount" style="display: inline-block; width: 50px;">
+            <button id="generateButton">Generate Fields</button> <button id="deleteButton">Clear Words</button>
+        </div>
+    
+        <div id="box4">
+            <button id="textAreaSetBtn">Set-Text</button><br>
+            <button id="textAreaEditBtn" style="display: none;">Edit-Text</button><br>
+            <textarea name="" id="textarea" cols="30" rows="10" style="display: unset;"></textarea>
+        </div>
+    </div>
+</body>
+</html>
+
